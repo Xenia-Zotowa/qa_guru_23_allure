@@ -9,7 +9,7 @@ import static com.codeborne.selenide.Selenide.open;
 import static io.qameta.allure.Allure.step;
 import static org.openqa.selenium.By.linkText;
 
-public class StepsTest {
+public class StepsTest extends TestBase {
 
     private static final String REPOSITORY = "eroshenkoam/allure-example";
     private static final int ISSUE = 80;
@@ -38,9 +38,11 @@ public class StepsTest {
     }
 
     @Test
+    //@DisplayName("Поиск issue via @Step Annotation")
     public void testAnnotatedStep() {
         SelenideLogger.addListener("allure", new AllureSelenide());
-        WebSteps steps = new WebSteps();
+        WebSteps steps;
+        steps = new WebSteps();
 
         steps.openMainPage();
         steps.searchForRepository(REPOSITORY);
@@ -50,4 +52,17 @@ public class StepsTest {
 
     }
 
+    @Test
+    public void testSelenide() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+        open("https://github.com");
+        $(".octicon-search").click();
+        $("#query-builder-test").sendKeys(REPOSITORY);
+        $("#query-builder-test").submit();
+        $(linkText(REPOSITORY)).click();
+        $("#issues-tab").click();
+        $(withText("#" + ISSUE)).should(Condition.exist);
+    }
+
 }
+
